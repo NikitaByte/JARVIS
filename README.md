@@ -3,6 +3,9 @@ A voice assistant named Jarvis will help you control your computer. You can use 
 
 ## Info
 
+**Project name:** J.A.R.V.I.S\
+**Logo:**\
+<img src="jarvis_logo.png" alt="logo" width="50" >\
 **Version:** 0.0.1\
 **Programming language:** Python\
 **IDE:** Visual Studio Code\
