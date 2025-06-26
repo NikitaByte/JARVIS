@@ -1,47 +1,50 @@
-import speech_recognition
-import pyttsx3
+import re
 import pywhatkit
 import wikipedia
 import webbrowser
-from Jarvis_main import takeCommand, speak
+from Jarvis_main import speak
+
+def get_search_query(query):
+    return re.sub(r"\b(search in google|search in youtube|search in wikipedia|jarvis)\b", "", query, flags=re.IGNORECASE).strip()
 
 def search_google(query):
-    if "google" in query:
-        import wikipedia as googleScrap
-        query = query.replace("jarvis", "")
-        query = query.replace("google search", "")
-        query = query.replace("google", "")
-        speak("This is what I found in Google.")
+    import wikipedia as googleScrap
+    search_query = get_search_query(query)
+    if not search_query:
+        speak("Please, sir, dictate your search query.")
+        return
     
+    speak("This is what I found in Google:")
     try:
-        pywhatkit.search(query)
-        result = googleScrap.summary(query,1)
+        pywhatkit.search(search_query)
+        result = googleScrap.summary(search_query, sentences=1)
         speak(result)
     
     except:
         speak("No speakable output available.")
     
 def search_youtube(query):
-    if "youtube" in query:
-        query = query.replace("jarvis", "")
-        query = query.replace("youtube search", "")
-        query = query.replace("youtube", "")
-        speak("This is what I found in YouTube.")
-        web = "https://www.youtube.com/results?search_query=" + query
-        webbrowser.open(web)
-        pywhatkit.playonyt(query)
-        speak("Done, sir.")
+    search_query = get_search_query(query)
+    if not search_query:
+        speak("Please, sir, dictate your search query.")
+        return
+    
+    speak("This is what I found in YouTube.")
+    webbrowser.open(f"https://www.youtube.com/results?search_query={search_query}")
+    pywhatkit.playonyt(search_query)
+    speak("Done, sir.")
 
 def search_wikipedia(query):
-    speak("Searching from Wikipedia...")
-    query = query.replace("jarvis", "")
-    query = query.replace("wikipedia search", "")
-    query = query.replace("wikipedia", "")
-    web = "https://en.wikipedia.org/wiki/" + query
-    webbrowser.open(web)
-    results = wikipedia.summary(query, sentences = 2)
-    speak("According to Wikipedia...")
-    if results:
+    search_query = get_search_query(query)
+    if not search_query:
+        speak("Please, sir, dictate your search query.")
+        return
+    try:
+        webbrowser.open(f"https://en.wikipedia.org/wiki/{search_query}")
+        results = wikipedia.summary(search_query, sentences=2)
+        speak("According to Wikipedia...")
         speak(results)
-
-
+    except wikipedia.exceptions.PageError:
+        speak("I couldn't find anything on Wikipedia.")
+    except Exception:
+        speak("Something went wrong with Wikipedia search.")

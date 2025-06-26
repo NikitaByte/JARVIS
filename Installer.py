@@ -1,2 +1,2 @@
 import pip
-pip.main(['install','playsound'])
+pip.main(['install','psutil'])
